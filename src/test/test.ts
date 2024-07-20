@@ -3,7 +3,7 @@ const G = 6.674 * Math.pow(10, -11);   // Constante gravitacional em m^3 kg^-1 s
 const M = 5.972 * Math.pow(10, 24);    // Massa do corpo central (planeta) em kg (ex: Terra)
 const m = 1.0 * Math.pow(10, 6);       // Massa do corpo em órbita em kg
 const R = [0, 0, 0];                   // Posição do corpo central [x, y, z]
-const dt = 200;                         // Intervalo de tempo em segundos
+const dt = 200;                        // Intervalo de tempo em segundos
 
 
 // Função para calcular a magnitude de um vetor
@@ -33,7 +33,8 @@ function normalize(vec) {
 }
 
 // Função de simulação numérica
-export function calculatePositions(r, v) {
+export function calculatePositions(m, r, v) {
+  m = m * Math.pow(10, 6);
 
   // Calcular o vetor de força gravitacional
   let r_vec = subtractVectors(r, R);

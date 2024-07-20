@@ -4,18 +4,31 @@ import * as THREE from 'three';
 
 import { calculatePositions } from '../../test/test';
 
-const Sphere = ({ position, color, speed, isRunning }) => {
+const Sphere = ({ position, speed, mass, color, isRunning }) => {
   const meshRef = useRef<THREE.Mesh>(null);
 
-  const [velocity, setVelocity] = useState([0,0,5000]);
-  const [positions, setPositions] = useState([7000 * 1000 * 3,0,0]);
+  const [velocity, setVelocity] = useState(speed);
+  const [positions, setPositions] = useState(position);
+  const [sphereMass, setSphereMass] = useState(mass);
 
-  useFrame((state) => {
+  useEffect(() => {
+    setPositions(position);
+    setVelocity(speed);
+    setSphereMass(mass);
+  }, [position, speed, mass])
+
+  useFrame(() => {
     if (isRunning && meshRef.current) {
-      const newValues = calculatePositions(positions, velocity);
+
+      const realPositions = [
+        positions[0] * 10000000,
+        positions[1] * 10000000,
+        positions[2] * 10000000,
+      ]
+      const newValues = calculatePositions(sphereMass, realPositions, velocity);
       
       setVelocity([newValues.vx, newValues.vy, newValues.vz]);
-      setPositions([newValues.x, newValues.y, newValues.z]);
+      setPositions([newValues.x / 10000000, newValues.y / 10000000, newValues.z / 10000000]);
 
       // Atualiza a posição do corpo
       if(!(isNaN(newValues.x) || isNaN(newValues.y) || isNaN(newValues.z))) {
@@ -28,7 +41,7 @@ const Sphere = ({ position, color, speed, isRunning }) => {
   });
 
   return (
-    <mesh ref={meshRef} position={position} castShadow>
+    <mesh ref={meshRef} position={positions} castShadow>
       <sphereGeometry args={[1, 32, 32]} />
       <meshStandardMaterial color={color} />
     </mesh>

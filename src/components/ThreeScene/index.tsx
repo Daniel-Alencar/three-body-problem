@@ -15,15 +15,15 @@ interface ThickAxesHelperProps {
 function ThickAxesHelper({ size, thickness, position }: ThickAxesHelperProps) {
   return (
     <group position={position}>
-      <mesh position={[size / 2, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
+      <mesh position={[0, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
         <cylinderGeometry args={[thickness / 2, thickness / 2, size, 32]} />
         <meshBasicMaterial color="red" />
       </mesh>
-      <mesh position={[0, size / 2, 0]}>
+      <mesh position={[0, 0, 0]} rotation={[0, 0, 0]}>
         <cylinderGeometry args={[thickness / 2, thickness / 2, size, 32]} />
         <meshBasicMaterial color="green" />
       </mesh>
-      <mesh position={[0, 0, size / 2]} rotation={[Math.PI / 2, 0, 0]}>
+      <mesh position={[0, 0, 0]} rotation={[Math.PI / 2, 0, 0]}>
         <cylinderGeometry args={[thickness / 2, thickness / 2, size, 32]} />
         <meshBasicMaterial color="blue" />
       </mesh>
@@ -32,18 +32,18 @@ function ThickAxesHelper({ size, thickness, position }: ThickAxesHelperProps) {
 }
 
 const ThreeScene: React.FC = () => {
-  const [sphere1Speed, setSphere1Speed] = useState([0.01, 0, 0]);
+  const [sphere1Speed, setSphere1Speed] = useState([0, 0, 0]);
   const [sphere2Speed, setSphere2Speed] = useState([0, 0.01, 0]);
-  const [sphere3Speed, setSphere3Speed] = useState([0, 0, 0.01]);
+  const [sphere3Speed, setSphere3Speed] = useState([0.01, 0, 0]);
   const [sphere1Mass, setSphere1Mass] = useState(1);
-  const [sphere2Mass, setSphere2Mass] = useState(2);
-  const [sphere3Mass, setSphere3Mass] = useState(3);
+  const [sphere2Mass, setSphere2Mass] = useState(1);
+  const [sphere3Mass, setSphere3Mass] = useState(1);
   const [isRunning, setIsRunning] = useState(false);
 
   const guiRef = useRef<dat.GUI | null>(null);
 
   useEffect(() => {
-    if (!guiRef.current) {
+    if(!guiRef.current) {
       guiRef.current = new dat.GUI();
 
       const sphere1Folder = guiRef.current.addFolder('Sphere 1');
@@ -78,7 +78,7 @@ const ThreeScene: React.FC = () => {
     }
 
     return () => {
-      if (guiRef.current) {
+      if(guiRef.current) {
         guiRef.current.destroy();
         guiRef.current = null;
       }
@@ -112,27 +112,34 @@ const ThreeScene: React.FC = () => {
         <pointLight position={[10, 10, 10]} />
         
         <ThickAxesHelper 
-          size={10000} 
+          size={10} 
           thickness={0.05}
           position={[0,0,0]}
         />
+
         <Sphere 
-          position={[-2, 0, 0]} color="#ffcccb" speed={sphere1Speed} 
+          position={[2, 0, 0]} color="#ffcccb" speed={sphere1Speed} 
           isRunning={isRunning} mass={sphere1Mass} 
         />
+        {/* 
         <Sphere 
-          position={[2, 0, 0]} color="#ccffcc" speed={sphere2Speed} 
+          position={[-2, 0, 0]} color="#ccffcc" speed={sphere2Speed} 
           isRunning={isRunning} mass={sphere2Mass} 
         />
         <Sphere 
           position={[0, 2, 0]} color="#ccccff" speed={sphere3Speed} 
           isRunning={isRunning} mass={sphere3Mass} 
         />
+        */}
+       
+
         <OrbitControls />
+        
         <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]} position={[0, -2, 0]}>
           <planeGeometry args={[100, 100]} />
           <shadowMaterial opacity={0.5} />
         </mesh>
+
       </Canvas>
       <div style={{ textAlign: 'center', marginTop: '20px' }}>
         {!isRunning && <button onClick={startSimulation}>Iniciar Simulação</button>}

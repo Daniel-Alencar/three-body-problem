@@ -32,9 +32,15 @@ function ThickAxesHelper({ size, thickness, position }: ThickAxesHelperProps) {
 }
 
 const ThreeScene: React.FC = () => {
-  const [sphere1Speed, setSphere1Speed] = useState([0, 0, 5000]);
-  const [sphere1Position, setSphere1Position] = useState([2.1, 0, 0]);
-  const [sphere1Mass, setSphere1Mass] = useState(1);
+  const [spheres, setSpheres] = useState([
+    {
+      id: 1,
+      position: [2.1, 0, 0],
+      speed: [0, 0, 5000],
+      mass: 1,
+      color: '#ffcccb'
+    }
+  ]);
 
   const [isRunning, setIsRunning] = useState(false);
 
@@ -44,35 +50,37 @@ const ThreeScene: React.FC = () => {
     if (!guiRef.current) {
       guiRef.current = new dat.GUI();
   
-      const sphere1Folder = guiRef.current.addFolder('Sphere 1');
+      spheres.forEach((sphere, index) => {
+        const folder = guiRef.current.addFolder(`Sphere ${index + 1}`);
   
-      sphere1Folder.add(sphere1Speed, '0', -5000, 5000).name('Speed X')
-        .setValue(sphere1Speed[0])
-        .onChange(value => setSphere1Speed([value, sphere1Speed[1], sphere1Speed[2]]));
+        folder.add(sphere.speed, '0', -5000, 5000).name('Speed X')
+          .setValue(sphere.speed[0])
+          .onChange(value => updateSphere(index, { ...sphere, speed: [value, sphere.speed[1], sphere.speed[2]] }));
   
-      sphere1Folder.add(sphere1Speed, '1', -5000, 5000).name('Speed Y')
-        .setValue(sphere1Speed[1])
-        .onChange(value => setSphere1Speed([sphere1Speed[0], value, sphere1Speed[2]]));
+        folder.add(sphere.speed, '1', -5000, 5000).name('Speed Y')
+          .setValue(sphere.speed[1])
+          .onChange(value => updateSphere(index, { ...sphere, speed: [sphere.speed[0], value, sphere.speed[2]] }));
   
-      sphere1Folder.add(sphere1Speed, '2', -5000, 5000).name('Speed Z')
-        .setValue(sphere1Speed[2])
-        .onChange(value => setSphere1Speed([sphere1Speed[0], sphere1Speed[1], value]));
+        folder.add(sphere.speed, '2', -5000, 5000).name('Speed Z')
+          .setValue(sphere.speed[2])
+          .onChange(value => updateSphere(index, { ...sphere, speed: [sphere.speed[0], sphere.speed[1], value] }));
   
-      sphere1Folder.add(sphere1Position, '0', -10, 10).name('Position X')
-        .setValue(sphere1Position[0])
-        .onChange(value => setSphere1Position([value, sphere1Position[1], sphere1Position[2]]));
+        folder.add(sphere.position, '0', -10, 10).name('Position X')
+          .setValue(sphere.position[0])
+          .onChange(value => updateSphere(index, { ...sphere, position: [value, sphere.position[1], sphere.position[2]] }));
   
-      sphere1Folder.add(sphere1Position, '1', -10, 10).name('Position Y')
-        .setValue(sphere1Position[1])
-        .onChange(value => setSphere1Position([sphere1Position[0], value, sphere1Position[2]]));
+        folder.add(sphere.position, '1', -10, 10).name('Position Y')
+          .setValue(sphere.position[1])
+          .onChange(value => updateSphere(index, { ...sphere, position: [sphere.position[0], value, sphere.position[2]] }));
   
-      sphere1Folder.add(sphere1Position, '2', -10, 10).name('Position Z')
-        .setValue(sphere1Position[2])
-        .onChange(value => setSphere1Position([sphere1Position[0], sphere1Position[1], value]));
+        folder.add(sphere.position, '2', -10, 10).name('Position Z')
+          .setValue(sphere.position[2])
+          .onChange(value => updateSphere(index, { ...sphere, position: [sphere.position[0], sphere.position[1], value] }));
   
-      sphere1Folder.add({ mass: sphere1Mass }, 'mass', 1, 100000).name('Mass')
-        .setValue(sphere1Mass)
-        .onChange(value => setSphere1Mass(value));
+        folder.add(sphere, 'mass', 1, 100000).name('Mass')
+          .setValue(sphere.mass)
+          .onChange(value => updateSphere(index, { ...sphere, mass: value }));
+      });
     }
   
     return () => {
@@ -81,7 +89,30 @@ const ThreeScene: React.FC = () => {
         guiRef.current = null;
       }
     };
-  }, []);
+  }, [spheres]);
+
+  const updateSphere = (index, updatedSphere) => {
+    const newSpheres = [...spheres];
+    newSpheres[index] = updatedSphere;
+    setSpheres(newSpheres);
+  };
+
+  const addSphere = () => {
+    const newSphere = {
+      id: spheres.length + 1,
+      position: [Math.random() * 20 - 10, Math.random() * 20 - 10, Math.random() * 20 - 10],
+      speed: [Math.random() * 5000 - 2500, Math.random() * 5000 - 2500, Math.random() * 5000 - 2500],
+      mass: Math.random() * 100 + 1,
+      color: '#'+Math.floor(Math.random()*16777215).toString(16)
+    };
+    setSpheres([...spheres, newSphere]);
+  };
+
+  const removeSphere = () => {
+    if (spheres.length > 0) {
+      setSpheres(spheres.slice(0, -1));
+    }
+  };
 
   const startSimulation = () => {
     setIsRunning(true);
@@ -115,10 +146,15 @@ const ThreeScene: React.FC = () => {
           position={[0,0,0]}
         />
 
-        <Sphere 
-          position={sphere1Position} speed={sphere1Speed} mass={sphere1Mass}
-          isRunning={isRunning} color="#ffcccb"
-        />
+        {
+        spheres.map((sphere, index) => (
+          <Sphere 
+            key={sphere.id}
+            position={sphere.position} speed={sphere.speed} mass={sphere.mass}
+            isRunning={isRunning} color={sphere.color}
+          />
+        ))
+        }
 
         <OrbitControls />
         
@@ -131,6 +167,8 @@ const ThreeScene: React.FC = () => {
       <div style={{ textAlign: 'center', marginTop: '20px' }}>
         {!isRunning && <button onClick={startSimulation}>Iniciar Simulação</button>}
         {isRunning && <button onClick={stopSimulation}>Parar Simulação</button>}
+        <button onClick={addSphere}>Adicionar Esfera</button>
+        <button onClick={removeSphere}>Remover Esfera</button>
       </div>
     </div>
   );

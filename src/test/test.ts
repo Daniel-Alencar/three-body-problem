@@ -1,7 +1,6 @@
 // Constantes e condições iniciais
 const G = 6.674 * Math.pow(10, -11);   // Constante gravitacional em m^3 kg^-1 s^-2
 const M = 5.972 * Math.pow(10, 24);    // Massa do corpo central (planeta) em kg (ex: Terra)
-const m = 1.0 * Math.pow(10, 6);       // Massa do corpo em órbita em kg
 const R = [0, 0, 0];                   // Posição do corpo central [x, y, z]
 const dt = 200;                        // Intervalo de tempo em segundos
 

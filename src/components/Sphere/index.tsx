@@ -11,6 +11,11 @@ const Sphere = ({ position, speed, mass, color, isRunning }) => {
   const [positions, setPositions] = useState(position);
   const [sphereMass, setSphereMass] = useState(mass);
 
+  const [trail, setTrail] = useState([]);
+
+  // Limite de pontos no rastro
+  const maxTrailLength = 100;
+
   useEffect(() => {
     setPositions(position);
     setVelocity(speed);
@@ -37,14 +42,41 @@ const Sphere = ({ position, speed, mass, color, isRunning }) => {
         meshRef.current.position.z = newValues.z / 10000000;
       }
 
+      // Atualizar o rastro
+      setTrail(prevTrail => {
+        const newTrail = [...prevTrail, meshRef.current.position.clone()];
+        if (newTrail.length > maxTrailLength) newTrail.shift();
+        return newTrail;
+      });
+
     }
   });
 
+  const trailPositions = new Float32Array(trail.length * 3);
+  trail.forEach((pos, i) => {
+    trailPositions[i * 3] = pos.x;
+    trailPositions[i * 3 + 1] = pos.y;
+    trailPositions[i * 3 + 2] = pos.z;
+  });
+
   return (
-    <mesh ref={meshRef} position={positions} castShadow>
-      <sphereGeometry args={[1, 32, 32]} />
-      <meshStandardMaterial color={color} />
-    </mesh>
+    <>
+      <mesh ref={meshRef} position={positions} castShadow>
+        <sphereGeometry args={[1, 32, 32]} />
+        <meshStandardMaterial color={color} />
+      </mesh>
+      <line>
+        <bufferGeometry>
+          <bufferAttribute
+            attachObject={['attributes', 'position']}
+            count={trailPositions.length / 3}
+            array={trailPositions}
+            itemSize={3}
+          />
+        </bufferGeometry>
+        <lineBasicMaterial color={'#ffffff'} />
+      </line>
+    </>
   );
 };
 

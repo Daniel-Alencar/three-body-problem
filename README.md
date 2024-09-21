@@ -1,30 +1,5 @@
-# React + TypeScript + Vite
+O problema dos três corpos é um desafio clássico da mecânica celeste que consiste em determinar o movimento de três corpos massivos (como planetas, estrelas ou luas) sob a influência mútua da gravidade. Embora seja possível resolver o problema para dois corpos (como a órbita de um planeta em torno de uma estrela) de forma exata, o comportamento de três corpos interagindo gravitacionalmente é extremamente complexo e caótico.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Ao contrário do problema de dois corpos, para o qual existem soluções analíticas (fórmulas exatas), o problema dos três corpos não tem uma solução geral conhecida. As trajetórias desses corpos podem ser altamente imprevisíveis e dependentes das condições iniciais, resultando em um comportamento que é sensível a pequenas perturbações. Isso torna o sistema caótico e requer métodos numéricos para obter soluções aproximadas em muitas situações.
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
-
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+Esse projeto tenta mostrar as relações gravitacionais entre três corpos e verificar a posição e velocidade desses corpos ao longo do tempo.
